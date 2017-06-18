@@ -1,5 +1,5 @@
 import {
-    Component, ElementRef, forwardRef, Input, OnInit, ViewChild
+    Component, ElementRef, EventEmitter, forwardRef, Input, OnInit, Output, ViewChild
 } from "@angular/core";
 import {ControlValueAccessor, FormControl, NG_VALIDATORS, NG_VALUE_ACCESSOR} from "@angular/forms";
 import {Observable} from "rxjs/Observable";
@@ -42,6 +42,7 @@ import {FileModel} from "../../models/file.model";
 export class FileUploadComponent implements ControlValueAccessor, OnInit {
     @ViewChild('file') fileElement: ElementRef;
     @Input() uploader: IFileUploadService;
+    @Output() canceled         = new EventEmitter();
     public fileName: string    = "";
     public progress: number;
     public isLoad: boolean     = false;
@@ -64,7 +65,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
     onChange(event: any) {
         if (!this.uploader)
             throw new Error('For uploading files need a file upload service');
-        if (event.srcElement.value != 0) {
+        if (event.srcElement.value.length != 0) {
             this.fileName = event.srcElement.files[0].name;
             this.isLoad   = true;
             this.progress = 0;
@@ -75,6 +76,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
                         this.propagateChange(new FileModel('someId', this.fileName));
                         this.isLoad = false;
                     });
+        } else {
+            this.fileName = "";
         }
     }
 
@@ -84,7 +87,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
                 this.focusSubscriber.unsubscribe();
             if (this.fileName.length == 0) {
                 this.propagateChange(null);
-                alert('you does not selected file');
+                this.canceled.emit();
             }
         });
     }

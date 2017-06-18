@@ -1,0 +1,16 @@
+<div class="modal-background">
+    <div class="container">
+        <header class="header-block">
+            <h3 class="header-title">{{header}}</h3>
+            <a class="close-button" (click)="close()">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </a>
+        </header>
+        <div class="content">
+            <span>{{description}}</span>
+        </div>
+        <div class="action-block">
+            <button class="simple-button" (click)="confirm()">ОК</button>
+        </div>
+    </div>
+</div>

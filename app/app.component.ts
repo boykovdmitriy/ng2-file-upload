@@ -1,6 +1,8 @@
-import {Component} from "@angular/core";
+import {Component, OnInit, ViewChild, ViewContainerRef} from "@angular/core";
 import {FileUploadService} from "./services/fileUploade.service";
 import {FileModel} from "./models/file.model";
+import {NotificationManager} from "./modals/notification.manager";
+import {ModalDialogComponent} from "./modals/modalDialog/modalDialog.component";
 
 @Component({
     selector: 'app',
@@ -11,10 +13,13 @@ import {FileModel} from "./models/file.model";
             </ng-container>
             <ng-container content>
                 <file-upload [(ngModel)]="file"
+                             (canceled)="canceled()"
                              [uploader]="fileUploader"></file-upload>
 
             </ng-container>
-        </panel>`,
+        </panel>
+        <section #notificationBlock></section>
+    `,
     styles  : [`
         :host {
             margin-top: 20px;;
@@ -24,13 +29,18 @@ import {FileModel} from "./models/file.model";
         }`]
 })
 
-export class AppComponent {
+export class AppComponent implements OnInit {
+    @ViewChild('notificationBlock', {read: ViewContainerRef}) notificationBlock: ViewContainerRef;
+
     public file: FileModel;
 
-    constructor(public fileUploader: FileUploadService) {}
+    constructor(public fileUploader: FileUploadService, private notificationManager: NotificationManager) {}
 
-    change(file: FileModel) {
-        console.log(file);
+    public ngOnInit(): void {
+        this.notificationManager.init(this.notificationBlock);
     }
 
+    public canceled() {
+        this.notificationManager.showDialog(ModalDialogComponent,'Warning','File selection canceled');
+    }
 }
