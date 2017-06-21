@@ -13,7 +13,7 @@ import {FileModel} from "../../models/file.model";
     selector : 'file-upload',
     styleUrls: ['./fileUpload.style.css'],
     template : `
-        <input type="file" id="file" #file (change)="onChange($event)" (click)="click()"
+        <input type="file" id="file" #file (change)="onChange($event)" (click)="onClick()"
                [disabled]="isDisabled || isLoad">
         <label for="file" [ngClass]="{'disabled':isDisabled || isLoad}">
             <span class="title">{{fileName.length == 0 ? 'Choose a file...' : fileName}}</span>
@@ -81,10 +81,9 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit {
         }
     }
 
-    click() {
+    onClick() {
         this.focusSubscriber = this.focusObservable.subscribe((x) => {
-            if (!!this.focusSubscriber)
-                this.focusSubscriber.unsubscribe();
+            this.focusSubscriber.unsubscribe();
             if (this.fileName.length == 0) {
                 this.propagateChange(null);
                 this.canceled.emit();
